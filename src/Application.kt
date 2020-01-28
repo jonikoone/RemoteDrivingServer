@@ -4,10 +4,11 @@ import io.ktor.application.*
 import io.ktor.response.*
 import io.ktor.request.*
 import io.ktor.routing.*
-import io.ktor.http.*
 import io.ktor.gson.*
 import io.ktor.features.*
 import java.awt.*
+import java.awt.event.InputEvent
+import java.awt.event.KeyEvent
 import java.util.*
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
@@ -77,16 +78,38 @@ fun Application.module(testing: Boolean = false) {
         }
 
         post("/move") {
-            var receive = call.receive<Position>()
+            var receive = call.receive<Offset>()
             robot.mouseMove(MouseInfo.getPointerInfo().location.x + receive.x.toInt(), MouseInfo.getPointerInfo().location.y + receive.y.toInt())
-            println(receive.toString())
+        }
+
+        post ("/clickLMB") {
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK)
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK)
+        }
+
+        post ("/clickRMB") {
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK)
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK)
+        }
+
+        post ("/press") {
+            robot.mousePress(InputEvent.BUTTON1_DOWN_MASK)
+        }
+
+        post ("/release") {
+            robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK)
+        }
+
+        post ("/scrollwheel") {
+            var receive = call.receive<Offset>()
+            robot.mouseWheel(receive.y.toInt())
         }
 
 
     }
 }
 
-data class Position(
+data class Offset(
     val x: Float,
     val y: Float
 )
